@@ -1,0 +1,23 @@
+name: Create Pocket Release
+on:
+  push:
+    tags:
+      - 'v*' # Rodará quando você criar uma tag como v1.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/release/*.apk
+          name: "Pocket Launcher v${{ github.ref_name }}"
+          body: "Versão otimizada para Android 8.0+ armeabi-v7a (Samsung A13)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
